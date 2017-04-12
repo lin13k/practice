@@ -1,25 +1,27 @@
-from collections import Counter
 class Solution(object):
 
     def lengthOfLongestSubstring(self, s):
-        """
-        :type s: str
-        :rtype: int
-        """
         if len(s) == 0:
             return 0
-        s = s + s[::-1]
+        if len(s) == 1:
+            return 1
+        lastIndex = 0
+        maxInt = 0
         d = {}
-        maxInt = 1
-        n = len(s)
-        for i in range(n):
+        for i in range(len(s)):
             if s[i] in d:
-                maxInt = max(maxInt, i - d[s[i]], i - sorted(list(d.values()))[0])
-                d = {}
+                lastIndex = max(d[s[i]] + 1, lastIndex)
             d[s[i]] = i
-        maxInt = max(maxInt, n - sorted(list(d.values()))[0])
-        return maxInt
+            maxInt = max(maxInt, i - lastIndex)
+        return maxInt + 1
 
 if __name__ == '__main__':
-    print(Solution().lengthOfLongestSubstring("abcabcbb"))
-    print(Solution().lengthOfLongestSubstring("asjrgapa"))
+    print(Solution().lengthOfLongestSubstring("abcabcbb"), 3)
+    print(Solution().lengthOfLongestSubstring("asjrgapa"), 6)
+    print(Solution().lengthOfLongestSubstring("abc"), 3)
+    print(Solution().lengthOfLongestSubstring("jxdlnaiaij"), 7)
+    print(Solution().lengthOfLongestSubstring("a"), 1)
+    print(Solution().lengthOfLongestSubstring("aa"), 1)
+    print(Solution().lengthOfLongestSubstring("aaa"), 1)
+    print(Solution().lengthOfLongestSubstring("caa"), 2)
+    print(Solution().lengthOfLongestSubstring("tmmzuxt"), 5)
