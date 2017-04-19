@@ -18,32 +18,30 @@ class Solution(object):
             return False
 
         result = False
-        while len(p) > 0:
-            if len(s) > 0:
-                if self.matchChar(s[0], p[0]):
-                    if self.is_decorated(p):
-                        self.memoryCache[(s, p[2:])] = self.recursiveSearch(s, p[2:])
-                        result = result or self.memoryCache[(s, p[2:])]
-                        s = s[1:]
-                    else:
-                        s = s[1:]
-                        p = p[1:]
+        if len(s) > 0:
+            if self.matchChar(s[0], p[0]):
+                if self.is_decorated(p):
+                    self.memoryCache[(s, p[2:])] = self.recursiveSearch(s, p[2:])
+                    result = result or self.memoryCache[(s, p[2:])]
+                    s = s[1:]
                 else:
-                    if self.is_decorated(p):
-                        p = p[2:]
-                    else:
-                        return False
-                self.memoryCache[(s, p)] = self.recursiveSearch(s, p)
-                result = result or self.memoryCache[(s, p)]
+                    s = s[1:]
+                    p = p[1:]
             else:
                 if self.is_decorated(p):
                     p = p[2:]
                 else:
                     return False
-                self.memoryCache[(s, p)] = self.recursiveSearch(s, p)
-                result = result or self.memoryCache[(s, p)]
-            if result:
-                break
+            self.memoryCache[(s, p)] = self.recursiveSearch(s, p)
+            result = result or self.memoryCache[(s, p)]
+        else:
+            if self.is_decorated(p):
+                p = p[2:]
+            else:
+                return False
+            self.memoryCache[(s, p)] = self.recursiveSearch(s, p)
+            result = result or self.memoryCache[(s, p)]
+
         return result
 
     def matchChar(self, c, pc):
