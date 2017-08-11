@@ -1,7 +1,10 @@
 class Solution(object):
-    def threeSumClosest(self, nums, target):
-        pass
-
+    def threeSum(self, nums):
+        nums.sort()
+        tmpLt = self.nSum(nums, 0, 3)
+        tmpKeys = dict.fromkeys(tmpLt).keys()
+        return [list(item) for item in tmpKeys]
+    
     def twoSum(self, nums, target):
         i = 0
         j = len(nums) - 1
@@ -32,24 +35,7 @@ class Solution(object):
                 tmpResult.extend(solutions)
             return tmpResult
 
-    def twoSumCloset(self, nums, target):
-        i = 0
-        j = len(nums) - 1
-        tmp = nums[i] + nums[j]
-        tmpIdx = (i, j)
-        while i < j:
-            if abs(tmp - target) > abs(nums[i] + nums[j] - target):
-                tmp = nums[i] + nums[j]
-                tmpIdx = (i, j)
-            if nums[i] + nums[j] < target:
-                i += 1
-            elif nums[i] + nums[j] > target:
-                j -= 1
-            else:
-                return (nums[tmpIdx[0]], nums[tmpIdx[1]])
-
 
 if __name__ == '__main__':
-    print(Solution().nSum([1, 2, 3, 4, 5, 6], 7, 2))
-    print(Solution().nSum([1, 2, 3, 4, 5, 6], 7, 3))
-    print(Solution().nSum([1, 2, 3, 4, 5, 6], 7, 4))
+    assert(Solution().threeSum(
+        [-1, 0, 1, 2, -1, -4]) == [[-1, -1, 2], [-1, 0, 1]])
