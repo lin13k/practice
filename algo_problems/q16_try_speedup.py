@@ -16,6 +16,8 @@ class Solution(object):
                 tmpResult.append(
                     nums[i] + self.nSumClosest(
                         nums[i + 1:], target - nums[i], n - 1))
+                if target in tmpResult:
+                    return target
             closestN = tmpResult[0]
             for i in tmpResult:
                 if abs(closestN - target) > abs(i - target):

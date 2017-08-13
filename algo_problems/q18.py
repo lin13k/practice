@@ -1,10 +1,12 @@
 class Solution(object):
-    def threeSum(self, nums):
+    def fourSum(self, nums, target):
+        if len(nums) < 4:
+            return []
         nums.sort()
-        tmpLt = self.nSum(nums, 0, 3)
+        tmpLt = self.nSum(nums, target, 4)
         tmpKeys = dict.fromkeys(tmpLt).keys()
         return [list(item) for item in tmpKeys]
-    
+
     def twoSum(self, nums, target):
         i = 0
         j = len(nums) - 1
@@ -22,9 +24,12 @@ class Solution(object):
 
     def nSum(self, nums, target, n):
         if len(nums) < n:
-            raise Exception('not enough nums')
+            return []
         if len(nums) == n:
-            return nums
+            if sum(nums)== target:
+                return [tuple(nums)]
+            else:
+                return []
         if n == 2:
             return self.twoSum(nums, target)
         else:
@@ -37,5 +42,8 @@ class Solution(object):
 
 
 if __name__ == '__main__':
-    assert(Solution().threeSum(
-        [-1, 0, 1, 2, -1, -4]) == [[-1, -1, 2], [-1, 0, 1]])
+    # print(Solution().fourSum([0], 0))
+    # print(Solution().fourSum([], 0))
+    # print(Solution().fourSum([0,0,0,0], 1))
+    # print(Solution().fourSum([0,0,0,0], 0))
+    print(Solution().fourSum([-1,0,1,2,-1,-4], -1))
