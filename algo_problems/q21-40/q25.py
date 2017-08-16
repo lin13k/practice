@@ -6,30 +6,39 @@ class ListNode(object):
 
 class Solution(object):
     def reverseKGroup(self, head, k):
+        if k == 1:
+            return head
         step = 0
-        result = None
+        result = head
         groupHead = head
         preGroupHead = None
+        firstFlag = True
         while head:
+            print(head.val)
             if step % k == 0:
                 # setting up
                 groupHead = head
             elif step % k == k - 1:
                 # do reverse
+                # 1. change tmpNode's next to preNode : loop for k-1
                 tmpNode = groupHead.next
                 preNode = groupHead
+                nextNode = None
                 for i in range(k-1):
                     nextNode = tmpNode.next
                     tmpNode.next = preNode
                     preNode = tmpNode
                     tmpNode = nextNode
+                # 2. change groupHead's next to nextNode
                 groupHead.next = tmpNode
-                head = groupHead
-                if not result:
+                # 3. change preGroupHead's next to group tail
+                if preGroupHead:
+                    preGroupHead.next = preNode
+                if firstFlag:
                     result = preNode
-                else:
-                    if preGroupHead: preGroupHead.next = preNode
-                    preGroupHead = groupHead
+                    firstFlag = False
+                preGroupHead = groupHead
+                head = groupHead
 
             step += 1
             head = head.next
@@ -57,5 +66,10 @@ def convertNodesToList(dataNode):
 
 
 if __name__ == '__main__':
-    print(convertNodesToList(Solution().reverseKGroup(genNodes([1,2,3,4]), 2)))
-    print(convertNodesToList(Solution().reverseKGroup(genNodes([1,2,3,4,5,6,7,8,9,10]), 2)))
+    print(convertNodesToList(Solution().reverseKGroup(genNodes([1]), 1)))
+    # print(convertNodesToList(Solution().reverseKGroup(genNodes([1,2,3,4]), 2)))
+    # print(convertNodesToList(Solution().reverseKGroup(genNodes([1,2,3,4,5,6,7,8,9,10]), 2)))
+    # print(convertNodesToList(Solution().reverseKGroup(genNodes([1,2,3,4]), 3)))
+    # print(convertNodesToList(Solution().reverseKGroup(genNodes([1,2,3,4,5,6,7,8,9,10]), 3)))
+    # print(convertNodesToList(Solution().reverseKGroup(genNodes([1,2,3,4,5,6,7,8,9,10]), 4)))
+    # print(convertNodesToList(Solution().reverseKGroup(genNodes([1,2,3,4,5]), 3)))
