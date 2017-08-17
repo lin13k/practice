@@ -10,7 +10,7 @@ class Solution(object):
                 nums.pop(i)
             else:
                 i += 1
-        return nums
+        return len(nums)
 
 if __name__ == '__main__':
     print(Solution().removeDuplicates([]))
