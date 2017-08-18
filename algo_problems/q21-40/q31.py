@@ -1,6 +1,6 @@
 import random
 
-
+# from Ant@stackoverflow
 def sub_partition(array, start, end, idx_pivot):
     'returns the position where the pivot winds up'
 
@@ -21,7 +21,7 @@ def sub_partition(array, start, end, idx_pivot):
     array[start], array[i - 1] = array[i - 1], array[start]
     return i - 1
 
-
+# from Ant@stackoverflow
 def quicksort(array, start=0, end=None):
 
     if end is None:
