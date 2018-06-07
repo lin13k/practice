@@ -4,4 +4,4 @@ class Solution(object):
         :type num: int
         :rtype: int
         """
-        
+        return num % 9

@@ -10,6 +10,7 @@ class Solution(object):
         result = []
         for i in nums:
             is_grouped = False
+            print(subsets)
             for j in nums:
                 if i == j:
                     continue
