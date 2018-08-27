@@ -4,10 +4,6 @@ from itertools import combinations
 
 class CardChecker(object):
     """docstring for CardChecker"""
-
-    def __init__(self):
-        super(CardChecker, self).__init__()
-
     def check(self, cards):
         '''
         cards: int list
@@ -126,6 +122,10 @@ class BombWithTwoSinglePattern(AbstractPattern):
                 for k in cpyDic.values():
                     if len(k) >= 1:
                         cardList.append(k[:1])
+                if 52 in self._cards:
+                    cardList.append([52])
+                if 53 in self._cards:
+                    cardList.append([53])
                 coms = combinations(cardList, 2)
                 for com in coms:
                     result.append(dic[i] + sum(com, []))
@@ -169,7 +169,7 @@ class TriplePattern(AbstractPattern):
         return "Triples"
 
 
-class TripleWithOnePattern(AbstractPattern):
+class TripleWithSinglePattern(AbstractPattern):
     def check(self):
         result = []
         dic = self.numberDict
@@ -186,10 +186,14 @@ class TripleWithOnePattern(AbstractPattern):
                 for card in cardList:
                     result.append(dic[i][:3] + card)
 
+                if 52 in self._cards:
+                    result.append(dic[i][:3] + [52])
+                if 53 in self._cards:
+                    result.append(dic[i][:3] + [53])
         return result
 
     def desc(self):
-        return "Triple with one"
+        return "Triple with single"
 
 
 class TripleWithPairPattern(AbstractPattern):
@@ -228,7 +232,7 @@ class SingleStraightPattern(AbstractPattern):
                         (startNum + i) % 13 != 1:
                     tmp.append(dic[(startNum + i) % 13][0])
                     i += 1
-                    result.append(tmp)
+                    result.append(tmp[:])
 
         return result
 
@@ -292,8 +296,11 @@ def show_cards(cardsDict):
         print('%s' % key)
         for cards in value:
             for card in cards:
-                suit, num = divmod(card, 13)
-                print('%s %s' % (suits[suit], num), end=',')
+                if card < 52:
+                    suit, num = divmod(card, 13)
+                    print('%s %s' % (suits[suit], num), end=',')
+                else:
+                    print(' BJ' if card == 52 else ' CJ', end=',')
             print()
 
 
@@ -302,4 +309,4 @@ if __name__ == '__main__':
     # print(cc.check([1, 2, 3, 52, 53, 14, 15, 27, 40]))
     # print(cc.check([1, 14, 27, 2, 15, 28, 3, 16]))
     # print(cc.check([1, 2, 3, 4, 5, 6, 7, 14, 15, 16, 17, 18, 28, 29]))
-    show_cards(cc.check([1, 2, 3, 4, 5, 6, 7, 14, 15, 16, 17, 18, 28, 29, 27, 40]))
+    show_cards(cc.check([1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 28, 29, 27, 40, 52]))
