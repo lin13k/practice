@@ -1,3 +1,7 @@
+# -*- coding: utf8 -*-
+from itertools import combinations
+
+
 class CardChecker(object):
     """docstring for CardChecker"""
 
@@ -28,7 +32,7 @@ class AbstractPattern(object):
         self._cards = cards
         self.numberCnt = self.getNumberCnt()
         self.numberDict = self.getNumberDict()
-        self.sameNumberCnt = self.getSameNumberCnt()
+        self.sameNumberDict = self.getSameNumberDict()
 
     def check(self):
         raise NotImplementedError()
@@ -52,7 +56,7 @@ class AbstractPattern(object):
             dic[card % 13].append(card)
         return dic
 
-    def getSameNumberCnt(self):
+    def getSameNumberDict(self):
         result = {i: [] for i in range(4)}
         cnts = self.numberCnt
         dic = self.numberDict
@@ -85,36 +89,55 @@ class BombPattern(AbstractPattern):
         return "Bombs"
 
 
-class BombWithPairPattern(AbstractPattern):
+class BombWithTwoPairPattern(AbstractPattern):
     def check(self):
         result = []
         dic = self.numberDict
-        snc = self.sameNumberCnt
         if len(self._cards) < 6:
             return result
         for i in range(13):
             if len(dic[i]) == 4:
-                pair = None
-                for j in range(1, 3):
-                    if len(snc[j]) > 0:
-                        if not all(
-                                k not in snc[j][0][0:2] for k in dic[i][:3]):
-                            continue
-                        pair = snc[j][0][0:2]
-                        break
-                if pair is None:
-                    continue
-                result.append(dic[i] + pair)
-
+                pairList = []
+                cpyDic = dic.copy()
+                cpyDic.pop(i)
+                for k in cpyDic.values():
+                    if len(k) >= 2:
+                        pairList.append(k[:2])
+                pairCom = combinations(pairList, 2)
+                for com in pairCom:
+                    result.append(dic[i] + sum(com, []))
         return result
 
     def desc(self):
-        return "Bomb with pair"
+        return "Bomb with two pair"
+
+
+class BombWithTwoSinglePattern(AbstractPattern):
+    def check(self):
+        result = []
+        dic = self.numberDict
+        if len(self._cards) < 6:
+            return result
+        for i in range(13):
+            if len(dic[i]) == 4:
+                cardList = []
+                cpyDic = dic.copy()
+                cpyDic.pop(i)
+                for k in cpyDic.values():
+                    if len(k) >= 1:
+                        cardList.append(k[:1])
+                coms = combinations(cardList, 2)
+                for com in coms:
+                    result.append(dic[i] + sum(com, []))
+        return result
+
+    def desc(self):
+        return "Bomb with two single"
 
 
 class SinglePattern(AbstractPattern):
     def check(self):
-        return self._cards
+        return [[i] for i in self._cards]
 
     def desc(self):
         return "Single card"
@@ -150,21 +173,18 @@ class TripleWithOnePattern(AbstractPattern):
     def check(self):
         result = []
         dic = self.numberDict
-        snc = self.sameNumberCnt
         if len(self._cards) <= 3:
             return result
         for i in range(13):
             if len(dic[i]) >= 3:
-                singleCard = None
-                for j in range(2):
-                    if len(snc[j]) > 0:
-                        singleCard = snc[j][0][0]
-                        break
-                if singleCard is None:
-                    for card in self._cards:
-                        if card not in dic[i][:3]:
-                            singleCard = card
-                result.append(dic[i][:3] + [singleCard])
+                cardList = []
+                cpyDic = dic.copy()
+                cpyDic.pop(i)
+                for k in cpyDic.values():
+                    if len(k) >= 1:
+                        cardList.append(k[:1])
+                for card in cardList:
+                    result.append(dic[i][:3] + card)
 
         return result
 
@@ -172,31 +192,27 @@ class TripleWithOnePattern(AbstractPattern):
         return "Triple with one"
 
 
-class TripleWithTwoPattern(AbstractPattern):
+class TripleWithPairPattern(AbstractPattern):
     def check(self):
         result = []
         dic = self.numberDict
-        snc = self.sameNumberCnt
         if len(self._cards) <= 3:
             return result
         for i in range(13):
             if len(dic[i]) >= 3:
-                pair = None
-                for j in range(1, 3):
-                    if len(snc[j]) > 0:
-                        if not all(
-                                k not in snc[j][0][0:2] for k in dic[i][:3]):
-                            continue
-                        pair = snc[j][0][0:2]
-                        break
-                if pair is None:
-                    continue
-                result.append(dic[i][:3] + pair)
+                pairList = []
+                cpyDic = dic.copy()
+                cpyDic.pop(i)
+                for k in cpyDic.values():
+                    if len(k) >= 2:
+                        pairList.append(k[:2])
+                for pair in pairList:
+                    result.append(dic[i][:3] + pair)
 
         return result
 
     def desc(self):
-        return "Triple with two"
+        return "Triple with pair"
 
 
 class SingleStraightPattern(AbstractPattern):
@@ -207,11 +223,12 @@ class SingleStraightPattern(AbstractPattern):
             if all(len(dic[(startNum + i) % 13]) != 0 for i in range(5)):
                 tmp = list(dic[(startNum + i) % 13][0] for i in range(5))
                 i = 5
+                result.append(tmp[:])
                 while len(dic[(startNum + i) % 13]) != 0 and\
                         (startNum + i) % 13 != 1:
                     tmp.append(dic[(startNum + i) % 13][0])
                     i += 1
-                result.append(tmp)
+                    result.append(tmp)
 
         return result
 
@@ -227,11 +244,12 @@ class DoubleStraightPattern(AbstractPattern):
             if all(len(dic[(startNum + i) % 13]) > 1 for i in range(3)):
                 tmp = list(dic[(startNum + i) % 13][:2] for i in range(3))
                 i = 3
+                result.append(sum(tmp, []))
                 while len(dic[(startNum + i) % 13]) > 1 and\
                         (startNum + i) % 13 != 1:
                     tmp.append(dic[(startNum + i) % 13][:2])
                     i += 1
-                result.append(sum(tmp, []))
+                    result.append(sum(tmp, []))
 
         return result
 
@@ -247,11 +265,12 @@ class TripleStraightPattern(AbstractPattern):
             if all(len(dic[(startNum + i) % 13]) > 2 for i in range(2)):
                 tmp = list(dic[(startNum + i) % 13][:3] for i in range(2))
                 i = 2
+                result.append(sum(tmp, []))
                 while len(dic[(startNum + i) % 13]) > 2 and\
                         (startNum + i) % 13 != 1:
                     tmp.append(dic[(startNum + i) % 13][:3])
                     i += 1
-                result.append(sum(tmp, []))
+                    result.append(sum(tmp, []))
 
         return result
 
@@ -260,8 +279,22 @@ class TripleStraightPattern(AbstractPattern):
 
 
 def PATTERN_LIST(cards):
+    # yield SingleStraightPattern(cards)
     for cls in AbstractPattern.__subclasses__():
         yield cls(cards)
+
+
+def show_cards(cardsDict):
+    suits = '♣♦♥♠'
+    for key, value in cardsDict.items():
+        if value is None:
+            continue
+        print('%s' % key)
+        for cards in value:
+            for card in cards:
+                suit, num = divmod(card, 13)
+                print('%s %s' % (suits[suit], num), end=',')
+            print()
 
 
 if __name__ == '__main__':
@@ -269,4 +302,4 @@ if __name__ == '__main__':
     # print(cc.check([1, 2, 3, 52, 53, 14, 15, 27, 40]))
     # print(cc.check([1, 14, 27, 2, 15, 28, 3, 16]))
     # print(cc.check([1, 2, 3, 4, 5, 6, 7, 14, 15, 16, 17, 18, 28, 29]))
-    print(cc.check([1, 2, 3, 4, 5, 6, 7, 14, 15, 16, 17, 18, 28, 29, 27, 40]))
+    show_cards(cc.check([1, 2, 3, 4, 5, 6, 7, 14, 15, 16, 17, 18, 28, 29, 27, 40]))
