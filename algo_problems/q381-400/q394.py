@@ -24,7 +24,6 @@ class Solution(object):
                 currentString = stack.pop() + currentString
             else:
                 currentString += c
-            print(stack)
         return currentString
 
 
