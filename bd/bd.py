@@ -83,7 +83,7 @@ class BirdManager(object):
         return total_distance / total_time
 
 
-class AbstractStaticUnit(object):
+class AbstractStatsUnit(object):
     def __init__(self, id):
         self.id = id
 
@@ -100,7 +100,7 @@ class AbstractStaticUnit(object):
         raise NotImplementedError()
 
 
-class DistanceFromDropped(AbstractStaticUnit):
+class DistanceFromDropped(AbstractStatsUnit):
     instances = []
 
     def __init__(self, id):
@@ -127,7 +127,7 @@ class DistanceFromDropped(AbstractStaticUnit):
         self.y = data['y']
 
 
-class TravelTimeAndDistance(AbstractStaticUnit):
+class TravelTimeAndDistance(AbstractStatsUnit):
     instances = []
 
     def __init__(self, id):
@@ -153,7 +153,7 @@ class TravelTimeAndDistance(AbstractStaticUnit):
         self.cost_time += data['time'] - self.t
 
 
-class PaidDuration(AbstractStaticUnit):
+class PaidDuration(AbstractStatsUnit):
     instances = []
 
     def __init__(self, id):
@@ -174,7 +174,7 @@ class PaidDuration(AbstractStaticUnit):
             self.paid_sum += 1 + math.ceil(d / 60) * 0.15
 
 
-class IdleDuration(AbstractStaticUnit):
+class IdleDuration(AbstractStatsUnit):
     instances = []
 
     def __init__(self, id):
